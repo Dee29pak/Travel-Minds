@@ -25,7 +25,7 @@ function HotelCardItem({ hotel }) {
     }
 
     return (
-        <Link to={'https://www.google.com/maps/search/?api=1&query=' + hotel?.hotelName + "," + hotel?.address} target='_blank'>
+        <Link to={'https://www.google.com/maps/search/?api=1&query=' + hotel?.hotelName + "," + hotel?.hotelAddress} target='_blank'>
 
             <div className='hover:scale-105 transition-all duration-300 cursor-pointer hover:shadow-md'>
                 <img src={photoUrl?photoUrl: '/placeholder.jpg'} className='rounded-xl h-45 w-full object-cover'/>
@@ -35,7 +35,7 @@ function HotelCardItem({ hotel }) {
 
                     <h2 className='text-xs text-gray-500 flex gap-2'>
                         <img src="/location.png" className='h-5 w-auto' />
-                        {hotel?.address}
+                        {hotel?.hotelAddress}
                     </h2>
 
                     <h2 className='text-sm flex gap-2'>

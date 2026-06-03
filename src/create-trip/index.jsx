@@ -23,12 +23,33 @@ function CreateTrip() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // const handleInputChange = (name, value) => {
+  //   setFormData({
+  //     ...formData,
+  //     [name]: value
+  //   })
+  // }
+
+  // ###################################################################################
   const handleInputChange = (name, value) => {
-    setFormData({
+    let updatedData = {
       ...formData,
       [name]: value
-    })
-  }
+    };
+
+    // auto calculate end date
+    if (updatedData.startDate && updatedData.noOfDays) {
+      const start = new Date(updatedData.startDate);
+      const end = new Date(start);
+
+      end.setDate(start.getDate() + Number(updatedData.noOfDays) - 1);
+
+      updatedData.endDate = end.toISOString().split('T')[0];
+    }
+
+    setFormData(updatedData);
+  };
+  // ###################################################################################
 
   useEffect(() => {
     console.log(formData);
@@ -48,19 +69,42 @@ function CreateTrip() {
       return;
     }
 
-    if (formData?.noOfDays > 7 && !formData?.location || !formData?.budget || !formData?.traveler) {
-      toast("Max trip duration: 7 days.")
+    // if (formData?.noOfDays > 7 && !formData?.location || !formData?.budget || !formData?.traveler) {
+    //   toast("Max trip duration: 7 days.")
+    //   return;
+    // }
+
+    // #########################################################################################
+    if (
+      formData?.noOfDays > 7 ||
+      !formData?.location ||
+      !formData?.budget ||
+      !formData?.traveler ||
+      !formData?.startDate
+    ) {
+      toast("Please fill all details. Max trip duration is 7 days.");
       return;
     }
+    // ##########################################################################################
 
     setLoading(true);
 
+    // const FINAL_PROMPT = AI_PROMPT
+    //   .replace('{location}', formData?.location?.label)
+    //   .replace('{totalDays}', formData?.noOfDays)
+    //   .replace('{traveler}', formData?.traveler)
+    //   .replace('{budget}', formData?.budget)
+    //   .replace('{totalDays}', formData?.noOfDays)
+
+    // ############################################################################
     const FINAL_PROMPT = AI_PROMPT
       .replace('{location}', formData?.location?.label)
       .replace('{totalDays}', formData?.noOfDays)
       .replace('{traveler}', formData?.traveler)
       .replace('{budget}', formData?.budget)
-      .replace('{totalDays}', formData?.noOfDays)
+      .replace('{startDate}', formData?.startDate)
+      .replace('{endDate}', formData?.endDate);
+    // ############################################################################
 
 
     const result = await chatSession.sendMessage(FINAL_PROMPT);
@@ -85,7 +129,7 @@ function CreateTrip() {
     });
 
     setLoading(false);
-    navigate('/view-trip/'+docId)
+    navigate('/view-trip/' + docId)
   }
 
   const GetUserProfile = (tokenInfo) => {
@@ -126,6 +170,30 @@ function CreateTrip() {
           <h2 className='text-xl mt-3 font-medium'>How many days are you planning your trip</h2>
           <Input placeholder={'Ex.3'} type="number" onChange={(e) => handleInputChange('noOfDays', e.target.value)} />
         </div>
+
+        {/* ########################################################################### */}
+        <div>
+          {/* Date Selection */}
+          <h2 className='text-xl mt-3 font-medium'>Select your travel dates</h2>
+
+          <Input
+            type="date"
+            className="mt-3"
+            disabled={!formData?.noOfDays}
+            onChange={(e) => handleInputChange('startDate', e.target.value)}
+          />
+
+          {/* Date Range Display */}
+          {formData?.startDate && formData?.endDate && (
+            <div className="mt-3 p-3 border rounded-lg bg-gray-50">
+              <p className="text-sm text-gray-500">Your travel dates:</p>
+              <p className="font-semibold text-lg">
+                {formData.startDate} → {formData.endDate}
+              </p>
+            </div>
+          )}
+        </div>
+        {/* ################################################################################# */}
 
         <div>
           <h2 className='text-xl mt-3 font-medium'>What is your Budget?</h2>
@@ -171,13 +239,13 @@ function CreateTrip() {
 
           <div className="relative overflow-hidden">
             <p className="group-hover:-translate-y-7 duration-[1.125s] ease-[cubic-bezier(0.19,1,0.22,1)]">
-              {loading?
+              {loading ?
                 <AiOutlineLoading3Quarters className='h-7 w-7 animate-spin' /> : ' Generate Trip'
               }
 
             </p>
             <p className="absolute top-7 left-0 group-hover:top-0 duration-[1.125s] ease-[cubic-bezier(0.19,1,0.22,1)]">
-              {loading?
+              {loading ?
                 <AiOutlineLoading3Quarters className='h-7 w-7 animate-spin' /> : ' Generate Trip'
               }
             </p>

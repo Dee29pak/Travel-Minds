@@ -22,7 +22,7 @@ function Header() {
   })
 
     const GetUserProfile = (tokenInfo) => {
-    axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?acess_token=${tokenInfo?.access_token}`, {
+    axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo?.access_token}`, {
       headers: {
         Authorization: `Bearer ${tokenInfo?.access_token}`,
         Accept: `Application/json`
@@ -38,8 +38,8 @@ function Header() {
   return (
     <div className='p-3 shadow-sm flex justify-between items-center px-5'>
       <div className="flex items-center">
-        <img src="/logo.svg" className="h-8 w-auto" />
-        <h1 className='text-[#1A4B7D] px-2 text-xl font-extrabold'>Travel Minds</h1>
+        <a href="/"><img src="/transparent-image.png" className="h-15 w-auto" /></a>
+        {/* <h1 className='text-[#1A4B7D] px-2 text-xl font-extrabold'>Travel Minds</h1> */}
       </div>
 
       <div>
@@ -74,7 +74,7 @@ function Header() {
 
             <Popover>
               <PopoverTrigger>
-                <img src={user?.picture} className='h-10 w-10 rounded-full' />
+                <img src={user?.picture} referrerPolicy="no-referrer" className='h-10 w-10 rounded-full' />
               </PopoverTrigger>
 
               <PopoverContent>
